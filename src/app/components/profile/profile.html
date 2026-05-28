@@ -1,0 +1,156 @@
+<section class="stack">
+    <div class="hero-card dark-card profile-hero">
+        <div>
+            <span class="eyebrow">Profile</span>
+            <h2 class="page-title profile-title">Everything from the profile API in one view</h2>
+            <p class="page-subtitle">The page shows user, student, admin, study material, and application details
+                alongside change-password tools.</p>
+        </div>
+    </div>
+
+    @if (message) {
+    <p class="error-text">{{ message }}</p>
+    }
+
+    @if (isLoading) {
+    <div class="panel">
+        <p class="muted">Loading profile...</p>
+    </div>
+    } @else if (profile; as user) {
+    <div class="grid two-col">
+        <div class="stack">
+            <div class="panel">
+                <h3 class="section-title">User details</h3>
+                <div class="chip-row">
+                    <span class="chip">ID: {{ user.id }}</span>
+                    <span class="chip">Name: {{ user.name }}</span>
+                    <span class="chip">Email: {{ user.email }}</span>
+                    <span class="chip">Role: {{ user.role }}</span>
+                </div>
+            </div>
+
+            @if (user.studentProfile; as student) {
+            <div class="panel">
+                <h3 class="section-title">Student profile</h3>
+                <div class="chip-row">
+                    <span class="chip">College: {{ student.collegeName }}</span>
+                    <span class="chip">CGPA: {{ student.cgpa ?? 'N/A' }}</span>
+                    <span class="chip">Backlogs: {{ student.backlogsCount ?? 'N/A' }}</span>
+                    <span class="chip">Branch: {{ student.streamBranch ?? 'N/A' }}</span>
+                </div>
+
+                <div class="stack compact">
+                    <div>
+                        <h4 class="mini-heading">Skills</h4>
+                        <div class="chip-row">
+                            @for (skill of student.skills; track skill) {
+                            <span class="chip">{{ skill }}</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="mini-heading">Assigned study materials</h4>
+                        @if (student.assignedStudyMaterials.length === 0) {
+                        <p class="muted">No study materials assigned yet.</p>
+                        } @else {
+                        <div class="card-list">
+                            @for (material of student.assignedStudyMaterials; track material.id) {
+                            <article class="mini-card">
+                                <h4>{{ material.name }}</h4>
+                                <p class="muted">Notes: {{ material.noteUrl || 'N/A' }}</p>
+                                <p class="muted">Video: {{ material.videoUrl || 'N/A' }}</p>
+                            </article>
+                            }
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            }
+
+            @if (user.adminProfile; as admin) {
+            <div class="panel">
+                <h3 class="section-title">Admin profile</h3>
+                <div class="chip-row">
+                    <span class="chip">Department: {{ admin.department }}</span>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3 class="section-title">All applications</h3>
+                @if (adminApplications.length === 0) {
+                <p class="muted">No applications found.</p>
+                } @else {
+                <div class="card-list">
+                    @for (app of adminApplications; track app.applicationId) {
+                    <article class="mini-card">
+                        <div class="spaced">
+                            <h4>{{ app.name }}</h4>
+                            <span class="status neutral">{{ app.status }}</span>
+                        </div>
+                        <p class="muted">Applicant: {{ app.name }} · {{ app.email }}</p>
+                        <p class="muted">Applied on {{ app.appliedAtUtc | date:'medium' }}</p>
+                        <div class="actions">
+                            @if (app.status === 'Pending') {
+                            <button class="button-soft" type="button"
+                                (click)="approveApplication(app.applicationId)">Approve</button>
+                            <button class="button-danger" type="button"
+                                (click)="rejectApplication(app.applicationId)">Reject</button>
+                            } @else {
+                            <span class="muted">Reviewed</span>
+                            }
+                        </div>
+                    </article>
+                    }
+                </div>
+                }
+            </div>
+            }
+
+            <div class="panel">
+                <h3 class="section-title">Applied internships</h3>
+                @if (user.appliedInternships.length === 0) {
+                <p class="muted">No internship applications have been submitted yet.</p>
+                } @else {
+                <div class="card-list">
+                    @for (application of user.appliedInternships; track application.applicationId) {
+                    <article class="mini-card">
+                        <div class="spaced">
+                            <h4>{{ application.name }}</h4>
+                            <span class="status neutral">{{ application.status }}</span>
+                        </div>
+                        <p class="muted">Applied on {{ application.appliedAtUtc | date:'medium' }}</p>
+                    </article>
+                    }
+                </div>
+                }
+            </div>
+        </div>
+
+        <div class="stack">
+            <div class="panel">
+                <h3 class="section-title">Change password</h3>
+                <form class="stack compact" [formGroup]="changeForm" (ngSubmit)="changePassword()">
+                    <label class="field"
+                        [class.error]="changeForm.controls.currentPassword.touched && changeForm.controls.currentPassword.invalid">
+                        <span>Current password</span>
+                        <input type="password" formControlName="currentPassword" placeholder="Current password" />
+                    </label>
+                    <label class="field"
+                        [class.error]="changeForm.controls.newPassword.touched && changeForm.controls.newPassword.invalid">
+                        <span>New password</span>
+                        <input type="password" formControlName="newPassword" placeholder="New password" />
+                    </label>
+                    <div class="actions">
+                        <button class="button" type="submit">Change password</button>
+                    </div>
+                </form>
+                @if (changeResult) {
+                <p class="success-text">{{ changeResult }}</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
+</section>

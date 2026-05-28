@@ -1,0 +1,45 @@
+.feedback-hero {
+    padding: 28px;
+}
+
+.feedback-title {
+    color: #ffffff;
+    max-width: 18ch;
+    margin-top: 14px;
+}
+
+.pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(18, 37, 71, 0.08);
+}
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 15, 36, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+}
+
+.modal {
+    width: 720px;
+    max-width: calc(100% - 48px);
+    background: var(--panel);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+@media (max-width: 900px) {
+    .pagination-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

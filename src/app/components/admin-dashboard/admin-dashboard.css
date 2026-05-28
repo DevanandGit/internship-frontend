@@ -1,0 +1,21 @@
+.dashboard-hero {
+    padding: 28px;
+}
+
+.dashboard-title {
+    color: #ffffff;
+    max-width: 20ch;
+    margin-top: 14px;
+}
+
+.dashboard-copy {
+    color: rgba(248, 251, 255, 0.78);
+}
+
+.compact {
+    gap: 12px;
+}
+
+.mini-card textarea {
+    min-height: 88px;
+}

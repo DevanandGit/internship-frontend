@@ -1,0 +1,173 @@
+<section class="stack">
+    <div class="hero-card dark-card internships-hero">
+        <div>
+            <span class="eyebrow">{{ isAdminView ? 'Admin workspace' : 'Student workspace' }}</span>
+            <h2 class="page-title hero-title">
+                {{ isAdminView ? 'Browse all internships' : 'Explore your eligible internships' }}
+            </h2>
+            <p class="page-subtitle hero-copy">
+                {{ isAdminView
+                ? 'Review every internship in the portal and open the dedicated pages from the navbar.'
+                : 'Review eligible internships, see what you have applied for, and submit new applications quickly.' }}
+            </p>
+        </div>
+
+        <div class="chip-row metrics">
+            <span class="chip">Loaded: {{ internships.length }}</span>
+            <span class="chip">Total: {{ totalCount }}</span>
+            <span class="chip">Page {{ pageNumber }} / {{ totalPages || 1 }}</span>
+            @if (!isAdminView) {
+            <span class="chip">Applied: {{ appliedInternships.length }}</span>
+            }
+        </div>
+    </div>
+
+    @if (message) {
+    <p class="status success">{{ message }}</p>
+    }
+
+    @if (isLoading) {
+    <div class="panel">
+        <p class="muted">Loading internships...</p>
+    </div>
+    } @else {
+    <div class="panel">
+        <div class="spaced">
+            <h3 class="section-title">{{ isAdminView ? 'All internships' : 'Available internships' }}</h3>
+            <div>
+                <span class="status neutral">{{ totalCount }} total</span>
+                @if (isAdminView) {
+                <button class="button small" type="button" (click)="openCreateModal()">Create internship</button>
+                }
+            </div>
+        </div>
+
+        <div class="list-grid">
+            @if (internships.length === 0) {
+            <div class="mini-card empty-state">
+                <h4>No internships found</h4>
+                <p class="muted">
+                    {{ isAdminView ? 'Create internships from the admin dashboard.' : 'No eligible internships are
+                    available right now.' }}
+                </p>
+            </div>
+            }
+
+            @for (internship of internships; track internship.id) {
+            <article class="mini-card internship-card">
+                <div class="spaced">
+                    <h4>{{ internship.name }}</h4>
+                    @if (isAdminView) {
+                    <span class="status neutral">Admin view</span>
+                    } @else if (isApplied(internship.id)) {
+                    <span class="status success">Applied</span>
+                    } @else {
+                    <span class="status warning">Eligible</span>
+                    }
+                </div>
+
+                <p class="muted">{{ internship.duration }} · {{ internship.streamBranch || 'Any branch' }}</p>
+
+                <div class="chip-row">
+                    <span class="chip">CGPA: {{ formatValue(internship.cgpa) }}</span>
+                    <span class="chip">Backlogs: {{ formatValue(internship.backlogsCount) }}</span>
+                    <span class="chip">Stipend: {{ internship.stipend ?? 'N/A' }}</span>
+                </div>
+
+                <div class="actions">
+                    @if (!isAdminView) {
+                    <button class="button" type="button" [disabled]="isApplying || isApplied(internship.id)"
+                        (click)="apply(internship.id)">
+                        {{ isApplied(internship.id) ? 'Applied' : 'Apply now' }}
+                    </button>
+                    } @else {
+                    <button class="button-ghost small" type="button" (click)="openEditModal(internship)">Update</button>
+                    <button class="button-ghost small danger" type="button"
+                        (click)="deleteInternship(internship.id)">Delete</button>
+                    }
+                </div>
+            </article>
+            }
+        </div>
+
+        <div class="pagination-bar">
+            <button class="button-ghost" type="button" [disabled]="pageNumber <= 1 || isLoading"
+                (click)="changePage(-1)">
+                Previous
+            </button>
+            <span class="muted">Page {{ pageNumber }} of {{ totalPages || 1 }}</span>
+            <button class="button-ghost" type="button" [disabled]="pageNumber >= totalPages || isLoading"
+                (click)="changePage(1)">
+                Next
+            </button>
+        </div>
+        @if (!isAdminView) {
+        <div class="panel">
+            <h3 class="section-title">Applied internships</h3>
+            @if (appliedInternships.length === 0) {
+            <p class="muted">You have not applied to any internships yet.</p>
+            } @else {
+            <div class="card-list">
+                @for (application of appliedInternships; track application.applicationId) {
+                <article class="mini-card">
+                    <div class="spaced">
+                        <h4>{{ application.name }}</h4>
+                        <span class="status neutral">{{ application.status }}</span>
+                    </div>
+                    <p class="muted">Applied on {{ application.appliedAtUtc | date:'medium' }}</p>
+                </article>
+                }
+            </div>
+            }
+        </div>
+        }
+    </div>
+    }
+</section>
+
+<!-- Modal dialog for create/update -->
+@if (showModal) {
+<div class="modal-backdrop">
+    <div class="modal">
+        <h3>{{ modalTitle }}</h3>
+        <form [formGroup]="internshipForm" (ngSubmit)="saveFromModal()">
+            <div class="field">
+                <label>Name</label>
+                <input type="text" formControlName="name" placeholder="Internship name" />
+            </div>
+
+            <div class="field-grid">
+                <div class="field">
+                    <label>Duration</label>
+                    <input type="text" formControlName="duration" placeholder="1 month" />
+                </div>
+                <div class="field">
+                    <label>Stream/Branch</label>
+                    <input type="text" formControlName="streamBranch" placeholder="CS, IT..." />
+                </div>
+            </div>
+
+            <div class="field-grid">
+                <div class="field">
+                    <label>CGPA</label>
+                    <input type="number" step="0.01" formControlName="cgpa" placeholder="Optional" />
+                </div>
+                <div class="field">
+                    <label>Backlogs</label>
+                    <input type="number" formControlName="backlogsCount" placeholder="Optional" />
+                </div>
+                <div class="field">
+                    <label>Stipend</label>
+                    <input type="number" formControlName="stipend" placeholder="Optional" />
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="button" type="submit" [disabled]="isSubmitting">{{ editingInternshipId ? 'Update' :
+                    'Create' }}</button>
+                <button class="button-ghost" type="button" (click)="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+}

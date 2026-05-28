@@ -1,0 +1,115 @@
+.internships-hero {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 28px;
+}
+
+.hero-title {
+    color: #ffffff;
+    margin-top: 14px;
+    max-width: 14ch;
+}
+
+.hero-copy {
+    color: rgba(248, 251, 255, 0.78);
+    max-width: 70ch;
+}
+
+.metrics {
+    justify-content: end;
+    align-self: start;
+}
+
+.empty-state {
+    border: 1px dashed rgba(17, 31, 71, 0.16);
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(18, 37, 71, 0.08);
+}
+
+@media (max-width: 900px) {
+    .internships-hero {
+        flex-direction: column;
+    }
+
+    .hero-title {
+        max-width: none;
+    }
+
+    .pagination-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Button hover adjustments for small/admin buttons in this view */
+.button.small {
+    padding: 8px 12px;
+    font-size: 0.95rem;
+}
+
+.button.small:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(15, 141, 196, 0.12);
+}
+
+.button-ghost.small {
+    padding: 8px 12px;
+}
+
+.button-ghost.small:hover {
+    background: rgba(25, 194, 255, 0.06);
+    color: var(--brand-dark);
+    border-color: rgba(14, 141, 196, 0.12);
+    transform: translateY(-1px);
+}
+
+.button-ghost.small.danger:hover {
+    background: rgba(239, 68, 68, 0.07);
+    color: var(--danger);
+    border-color: rgba(239, 68, 68, 0.18);
+    transform: translateY(-1px);
+}
+
+/* Modal styles */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 15, 36, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+}
+
+.modal {
+    width: 720px;
+    max-width: calc(100% - 48px);
+    background: var(--panel);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.modal .field-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.modal .field {
+    margin-bottom: 12px;
+}
+
+.modal .actions {
+    margin-top: 12px;
+}

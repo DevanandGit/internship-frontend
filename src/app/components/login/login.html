@@ -1,0 +1,47 @@
+<section class="auth-page">
+    <div class="auth-card dark-card login-card">
+        <div class="login-header">
+            <h1>Welcome back</h1>
+            <p>Login to continue to your internship workspace.</p>
+        </div>
+
+        <form class="stack" [formGroup]="form" (ngSubmit)="submit()">
+            <label class="field" [class.error]="form.controls.username.touched && form.controls.username.invalid">
+                <span>Email</span>
+                <input type="email" formControlName="username" placeholder="Enter email" autocomplete="email" />
+                @if (form.controls.username.touched && form.controls.username.errors?.['required']) {
+                <small class="error-text">Email is required.</small>
+                }
+                @if (form.controls.username.touched && form.controls.username.errors?.['email']) {
+                <small class="error-text">Enter a valid email address.</small>
+                }
+            </label>
+
+            <label class="field" [class.error]="form.controls.password.touched && form.controls.password.invalid">
+                <span>Password</span>
+                <input type="password" formControlName="password" placeholder="Enter password"
+                    autocomplete="current-password" />
+                @if (form.controls.password.touched && form.controls.password.errors?.['required']) {
+                <small class="error-text">Password is required.</small>
+                }
+                @if (form.controls.password.touched && form.controls.password.errors?.['minlength']) {
+                <small class="error-text">Password must be at least 8 characters.</small>
+                }
+            </label>
+
+            <p class="info-text">Students and admins use the same login page. Admin users are routed to the dashboard
+                automatically.</p>
+
+            @if (message) {
+            <p class="error-text">{{ message }}</p>
+            }
+
+            <div class="actions">
+                <button class="button" type="submit" [disabled]="isSubmitting">
+                    {{ isSubmitting ? 'Signing in...' : 'Login' }}
+                </button>
+                <a class="button-ghost" routerLink="/register">Register as student</a>
+            </div>
+        </form>
+    </div>
+</section>

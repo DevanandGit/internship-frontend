@@ -1,0 +1,79 @@
+<section class="auth-page">
+    <div class="auth-card dark-card register-card">
+        <div class="login-header">
+            <h1>Student registration</h1>
+            <p>Create a student account with profile and eligibility details.</p>
+        </div>
+
+        <form class="stack" [formGroup]="form" (ngSubmit)="submit()">
+            <div class="field-grid two">
+                <label class="field" [class.error]="form.controls.name.touched && form.controls.name.invalid">
+                    <span>Name</span>
+                    <input type="text" formControlName="name" placeholder="Enter your name" autocomplete="name" />
+                </label>
+
+                <label class="field" [class.error]="form.controls.email.touched && form.controls.email.invalid">
+                    <span>Email</span>
+                    <input type="email" formControlName="email" placeholder="Enter your email" autocomplete="email" />
+                </label>
+            </div>
+
+            <div class="field-grid two">
+                <label class="field" [class.error]="form.controls.password.touched && form.controls.password.invalid">
+                    <span>Password</span>
+                    <input type="password" formControlName="password" placeholder="Create password"
+                        autocomplete="new-password" />
+                </label>
+
+                <label class="field"
+                    [class.error]="form.controls.confirmPassword.touched && form.errors?.['passwordMismatch']">
+                    <span>Confirm password</span>
+                    <input type="password" formControlName="confirmPassword" placeholder="Re-enter password"
+                        autocomplete="new-password" />
+                </label>
+            </div>
+
+            <div class="field-grid two">
+                <label class="field"
+                    [class.error]="form.controls.collegeName.touched && form.controls.collegeName.invalid">
+                    <span>College name</span>
+                    <input type="text" formControlName="collegeName" placeholder="College name" />
+                </label>
+
+                <label class="field"
+                    [class.error]="form.controls.streamBranch.touched && form.controls.streamBranch.invalid">
+                    <span>Stream branch</span>
+                    <input type="text" formControlName="streamBranch" placeholder="CSE, IT, ECE, ..." />
+                </label>
+            </div>
+
+            <div class="field-grid two">
+                <label class="field">
+                    <span>CGPA</span>
+                    <input type="number" step="0.01" min="0" max="10" formControlName="cgpa"
+                        placeholder="0.00 - 10.00" />
+                </label>
+
+                <label class="field">
+                    <span>Backlogs count</span>
+                    <input type="number" min="0" max="20" formControlName="backlogsCount" placeholder="0" />
+                </label>
+            </div>
+
+            @if (form.touched && form.errors?.['passwordMismatch']) {
+            <p class="error-text">Passwords do not match.</p>
+            }
+
+            @if (message) {
+            <p class="error-text">{{ message }}</p>
+            }
+
+            <div class="actions">
+                <button class="button" type="submit" [disabled]="isSubmitting">
+                    {{ isSubmitting ? 'Creating account...' : 'Register' }}
+                </button>
+                <a class="button-ghost" routerLink="/login">Back to login</a>
+            </div>
+        </form>
+    </div>
+</section>

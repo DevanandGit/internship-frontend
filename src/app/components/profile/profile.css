@@ -1,0 +1,18 @@
+.profile-hero {
+    padding: 28px;
+}
+
+.profile-title {
+    color: #ffffff;
+    max-width: 18ch;
+    margin-top: 14px;
+}
+
+.compact {
+    gap: 12px;
+}
+
+.mini-heading {
+    margin: 0 0 10px;
+    font-size: 1rem;
+}

@@ -1,0 +1,45 @@
+.register-card {
+    position: relative;
+    width: min(920px, 100%);
+}
+
+.login-header h1 {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    letter-spacing: -0.05em;
+}
+
+.login-header p {
+    margin: 10px 0 0;
+    color: rgba(248, 251, 255, 0.78);
+}
+
+.stack {
+    margin-top: 24px;
+}
+
+.field span,
+.help-text,
+.error-text {
+    color: rgba(248, 251, 255, 0.9);
+}
+
+.field input {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.field input::placeholder {
+    color: rgba(255, 255, 255, 0.42);
+}
+
+.help-text {
+    color: rgba(248, 251, 255, 0.68);
+}
+
+.button-ghost {
+    background: rgba(255, 255, 255, 0.08);
+    color: #f8fbff;
+    border-color: rgba(255, 255, 255, 0.12);
+}

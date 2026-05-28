@@ -1,0 +1,19 @@
+<div class="page-shell">
+    <header class="shell-navbar">
+        <a class="shell-brand" routerLink="/internships" aria-label="Internship Portal home">
+            <span class="shell-brand-mark">IP</span>
+            <span class="shell-brand-text">Internship Portal</span>
+        </a>
+
+        <nav class="shell-nav" aria-label="Primary navigation">
+            <a routerLink="/internships" routerLinkActive="active-link">Internships</a>
+            <a routerLink="/profile" routerLinkActive="active-link">Profile</a>
+            <a routerLink="/feedback" routerLinkActive="active-link">Feedback</a>
+            <button type="button" class="shell-logout" (click)="logout()">Logout</button>
+        </nav>
+    </header>
+
+    <main class="shell-main">
+        <router-outlet></router-outlet>
+    </main>
+</div>

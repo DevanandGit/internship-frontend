@@ -1,0 +1,260 @@
+<section class="stack">
+    <div class="hero-card dark-card dashboard-hero">
+        <div>
+            <span class="eyebrow">Admin dashboard</span>
+            <h2 class="page-title dashboard-title">Manage internships, applications, feedback, and timers</h2>
+            <p class="page-subtitle dashboard-copy">The current backend exposes internship, review, profile, and
+                feedback APIs. Skills are shown here as a frontend-ready local panel.</p>
+        </div>
+    </div>
+
+    @if (message) {
+    <p class="error-text">{{ message }}</p>
+    }
+
+    @if (isLoading) {
+    <div class="panel">
+        <p class="muted">Loading dashboard...</p>
+    </div>
+    } @else {
+    <div class="grid two-col">
+        <div class="stack">
+            <div class="panel">
+                <div class="spaced">
+                    <h3 class="section-title">Internship form</h3>
+                    @if (editingInternshipId) {
+                    <span class="status warning">Editing #{{ editingInternshipId }}</span>
+                    }
+                </div>
+
+                <form class="stack compact" [formGroup]="internshipForm" (ngSubmit)="saveInternship()">
+                    <div class="field-grid two">
+                        <label class="field">
+                            <span>Name</span>
+                            <input type="text" formControlName="name" placeholder="Internship name" />
+                        </label>
+                        <label class="field">
+                            <span>Duration</span>
+                            <input type="text" formControlName="duration" placeholder="6 weeks, 3 months, ..." />
+                        </label>
+                    </div>
+
+                    <div class="field-grid two">
+                        <label class="field">
+                            <span>Stream branch</span>
+                            <input type="text" formControlName="streamBranch" placeholder="Any or specific branch" />
+                        </label>
+                        <label class="field">
+                            <span>Stipend</span>
+                            <input type="number" min="0" step="0.01" formControlName="stipend"
+                                placeholder="Optional stipend" />
+                        </label>
+                    </div>
+
+                    <div class="field-grid two">
+                        <label class="field">
+                            <span>CGPA requirement</span>
+                            <input type="number" min="0" max="10" step="0.01" formControlName="cgpa"
+                                placeholder="Optional CGPA" />
+                        </label>
+                        <label class="field">
+                            <span>Backlogs requirement</span>
+                            <input type="number" min="0" max="20" formControlName="backlogsCount"
+                                placeholder="Optional backlogs" />
+                        </label>
+                    </div>
+
+                    <label class="field">
+                        <span>Student IDs</span>
+                        <input type="text" formControlName="studentIdsText"
+                            placeholder="Comma separated student IDs, optional" />
+                    </label>
+
+                    <div class="actions">
+                        <button class="button" type="submit" [disabled]="isSubmitting">
+                            {{ editingInternshipId ? 'Update internship' : 'Create internship' }}
+                        </button>
+                        @if (editingInternshipId) {
+                        <button class="button-ghost" type="button" (click)="cancelEdit()">Cancel</button>
+                        }
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel">
+                <h3 class="section-title">Internships</h3>
+                <div class="card-list">
+                    @for (internship of internships; track internship.id) {
+                    <article class="mini-card">
+                        <div class="spaced">
+                            <div>
+                                <h4>{{ internship.name }}</h4>
+                                <p class="muted">{{ internship.duration }} · {{ internship.streamBranch || 'Any branch'
+                                    }}</p>
+                            </div>
+                            <span class="status neutral">#{{ internship.id }}</span>
+                        </div>
+
+                        <div class="chip-row">
+                            <span class="chip">CGPA: {{ internship.cgpa ?? 'N/A' }}</span>
+                            <span class="chip">Backlogs: {{ internship.backlogsCount ?? 'N/A' }}</span>
+                            <span class="chip">Stipend: {{ internship.stipend ?? 'N/A' }}</span>
+                        </div>
+
+                        <div class="actions">
+                            <button class="button-soft" type="button"
+                                (click)="selectInternship(internship.id)">Applications</button>
+                            <button class="button-ghost" type="button"
+                                (click)="editInternship(internship)">Edit</button>
+                            <button class="button-danger" type="button"
+                                (click)="deleteInternship(internship.id)">Delete</button>
+                        </div>
+                    </article>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="stack">
+            <div class="panel">
+                <div class="spaced">
+                    <h3 class="section-title">Applications</h3>
+                    @if (selectedInternshipId) {
+                    <span class="status warning">Internship #{{ selectedInternshipId }}</span>
+                    }
+                </div>
+
+                @if (applicationsMessage) {
+                <p class="error-text">{{ applicationsMessage }}</p>
+                }
+
+                @if (applications.length === 0) {
+                <p class="muted">Select an internship to see the submitted applications.</p>
+                } @else {
+                <div class="card-list">
+                    @for (application of applications; track application.applicationId) {
+                    <article class="mini-card">
+                        <div class="spaced">
+                            <div>
+                                <h4>{{ application.name }}</h4>
+                                <p class="muted">{{ application.email }} · {{ application.collegeName || 'College not
+                                    provided' }}</p>
+                            </div>
+                            <span class="status neutral">{{ application.status }}</span>
+                        </div>
+
+                        <div class="chip-row">
+                            <span class="chip">CGPA: {{ application.cgpa ?? 'N/A' }}</span>
+                            <span class="chip">Backlogs: {{ application.backlogsCount ?? 'N/A' }}</span>
+                            <span class="chip">Branch: {{ application.streamBranch ?? 'N/A' }}</span>
+                        </div>
+
+                        <div class="field-grid">
+                            <label class="field">
+                                <span>Review note</span>
+                                <textarea [formControl]="reviewNoteForm.controls.note"
+                                    placeholder="Optional note for approve/reject"></textarea>
+                            </label>
+                        </div>
+
+                        <div class="actions">
+                            <button class="button" type="button"
+                                (click)="approve(application.applicationId)">Approve</button>
+                            <button class="button-danger" type="button"
+                                (click)="reject(application.applicationId)">Reject</button>
+                        </div>
+                    </article>
+                    }
+                </div>
+                }
+            </div>
+
+            <div class="panel">
+                <h3 class="section-title">Feedback timer</h3>
+                <form class="stack compact" [formGroup]="timerForm" (ngSubmit)="saveFeedbackTimer()">
+                    <div class="field-grid two">
+                        <label class="field">
+                            <span>Start</span>
+                            <input type="datetime-local" formControlName="startUtc" />
+                        </label>
+                        <label class="field">
+                            <span>End</span>
+                            <input type="datetime-local" formControlName="endUtc" />
+                        </label>
+                    </div>
+
+                    <div class="actions">
+                        <button class="button-soft" type="submit">Set timer</button>
+                    </div>
+                </form>
+                @if (selectedTimer) {
+                <p class="info-text">Timer saved: {{ selectedTimer.startUtc | date:'medium' }} - {{ selectedTimer.endUtc
+                    | date:'medium' }}</p>
+                }
+                @if (timerMessage) {
+                <p class="success-text">{{ timerMessage }}</p>
+                }
+            </div>
+
+            <div class="panel">
+                <h3 class="section-title">All feedbacks</h3>
+                @if (feedbacks.length === 0) {
+                <p class="muted">No feedback is available yet.</p>
+                } @else {
+                <div class="card-list">
+                    @for (feedback of feedbacks; track feedback.id) {
+                    <article class="mini-card">
+                        <div class="spaced">
+                            <div>
+                                <h4>Feedback #{{ feedback.id }}</h4>
+                                <p class="muted">Student {{ feedback.studentUserId }} · Internship {{
+                                    feedback.internshipId }}</p>
+                            </div>
+                            <span class="status success">Rating {{ feedback.rating }}/5</span>
+                        </div>
+                        <p class="muted">{{ feedback.comments || 'No comments provided.' }}</p>
+                        <p class="muted">Submitted {{ feedback.submittedAtUtc | date:'medium' }}</p>
+                    </article>
+                    }
+                </div>
+                }
+            </div>
+
+            <div class="panel">
+                <div class="spaced">
+                    <h3 class="section-title">Skills</h3>
+                    @if (skillsMessage) {
+                    <span class="status neutral">{{ skillsMessage }}</span>
+                    }
+                </div>
+
+                <form class="stack compact" [formGroup]="skillForm" (ngSubmit)="saveSkill()">
+                    <label class="field">
+                        <span>Skill name</span>
+                        <input type="text" formControlName="stackName" placeholder="Angular, React, SQL..." />
+                    </label>
+                    <div class="actions">
+                        <button class="button-soft" type="submit">{{ editingSkillId ? 'Update skill' : 'Add skill'
+                            }}</button>
+                    </div>
+                </form>
+
+                <div class="card-list">
+                    @for (skill of localSkills; track skill.id) {
+                    <article class="mini-card">
+                        <div class="spaced">
+                            <h4>{{ skill.stackName }}</h4>
+                            <span class="status neutral">#{{ skill.id }}</span>
+                        </div>
+                        <div class="actions">
+                            <button class="button-ghost" type="button" (click)="editSkill(skill)">Edit</button>
+                            <button class="button-danger" type="button" (click)="deleteSkill(skill.id)">Delete</button>
+                        </div>
+                    </article>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</section>

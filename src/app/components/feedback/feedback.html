@@ -1,0 +1,118 @@
+<section class="stack">
+    <div class="hero-card dark-card feedback-hero">
+        <div>
+            <span class="eyebrow">Feedback</span>
+            <h2 class="page-title feedback-title">
+                {{ isAdminView ? 'Review all submitted feedback' : 'Share feedback for your enrolled internships' }}
+            </h2>
+            <p class="page-subtitle">
+                {{ isAdminView
+                ? 'Admins can review paged feedback submissions from students.'
+                : 'Students can submit feedback for internships they have been approved for.' }}
+            </p>
+        </div>
+    </div>
+
+    @if (message) {
+    <p class="status success">{{ message }}</p>
+    }
+
+    @if (isLoading) {
+    <div class="panel">
+        <p class="muted">Loading feedback...</p>
+    </div>
+    } @else if (isAdminView) {
+    <div class="panel">
+        <div class="spaced">
+            <h3 class="section-title">All feedbacks</h3>
+            <span class="status neutral">{{ totalCount }} total</span>
+        </div>
+
+        @if (feedbacks.length === 0) {
+        <p class="muted">No feedbacks available yet.</p>
+        } @else {
+        <div class="card-list">
+            @for (feedback of feedbacks; track feedback.id) {
+            <article class="mini-card">
+                <div class="spaced">
+                    <div>
+                        <h4>{{ feedback.internshipName || ('Internship #' + feedback.internshipId) }}</h4>
+                        <p class="muted">{{ feedback.studentName || ('Student #' + feedback.studentUserId) }} · {{
+                            feedback.studentEmail || 'N/A' }}</p>
+                    </div>
+                    <span class="status success">Rating {{ feedback.rating }}/5</span>
+                </div>
+                <p class="muted">{{ feedback.comments || 'No comments provided.' }}</p>
+                <p class="muted">Submitted {{ feedback.submittedAtUtc | date:'medium' }}</p>
+            </article>
+            }
+        </div>
+
+        <div class="pagination-bar">
+            <button class="button-ghost" type="button" [disabled]="pageNumber <= 1"
+                (click)="changePage(-1)">Previous</button>
+            <span class="muted">Page {{ pageNumber }} of {{ totalPages || 1 }}</span>
+            <button class="button-ghost" type="button" [disabled]="pageNumber >= totalPages"
+                (click)="changePage(1)">Next</button>
+        </div>
+        }
+    </div>
+    } @else {
+    <div class="panel">
+        <h3 class="section-title">Your approved internships</h3>
+        @if (studentInternships.length === 0) {
+        <p class="muted">No approved internships are available for feedback yet.</p>
+        } @else {
+        <div class="card-list">
+            @for (internship of studentInternships; track internship.applicationId) {
+            <article class="mini-card">
+                <div class="spaced">
+                    <div>
+                        <h4>{{ internship.name }}</h4>
+                        <p class="muted">Applied on {{ internship.appliedAtUtc | date:'medium' }}</p>
+                    </div>
+                    <span class="status success">Approved</span>
+                </div>
+                <div class="actions">
+                    <button class="button-soft" type="button" [disabled]="!canSubmitFor(internship.internshipId)"
+                        (click)="openFeedbackModal(internship)">
+                        {{ canSubmitFor(internship.internshipId) ? 'Add feedback' : 'Submitted' }}
+                    </button>
+                </div>
+            </article>
+            }
+        </div>
+        }
+    </div>
+    }
+</section>
+
+@if (showModal && activeInternship) {
+<div class="modal-backdrop">
+    <div class="modal">
+        <h3>Add feedback for {{ activeInternship.name }}</h3>
+        <form class="stack compact" [formGroup]="feedbackForm" (ngSubmit)="submitFeedback()">
+            <label class="field">
+                <span>Rating</span>
+                <select formControlName="rating">
+                    <option [ngValue]="5">5</option>
+                    <option [ngValue]="4">4</option>
+                    <option [ngValue]="3">3</option>
+                    <option [ngValue]="2">2</option>
+                    <option [ngValue]="1">1</option>
+                </select>
+            </label>
+
+            <label class="field">
+                <span>Comments</span>
+                <textarea formControlName="comments" placeholder="Share your experience"></textarea>
+            </label>
+
+            <div class="actions">
+                <button class="button" type="submit" [disabled]="isSubmitting">Submit</button>
+                <button class="button-ghost" type="button" (click)="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+}
