@@ -19,11 +19,82 @@
 .metrics {
     justify-content: end;
     align-self: start;
+    max-width: 260px;
+}
+
+.panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.panel-header p {
+    max-width: 70ch;
+}
+
+.panel-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.card-top h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    letter-spacing: -0.02em;
+}
+
+.internship-meta {
+    margin-top: 8px;
+}
+
+.internship-card {
+    display: grid;
+    gap: 14px;
+    border: 1px solid rgba(18, 37, 71, 0.1);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(247, 250, 255, 0.76));
+    box-shadow: 0 12px 28px rgba(9, 17, 36, 0.04);
+    min-height: 100%;
+}
+
+.internship-actions {
+    margin-top: 4px;
+}
+
+.internship-card .chip-row {
+    row-gap: 10px;
 }
 
 .empty-state {
     border: 1px dashed rgba(17, 31, 71, 0.16);
     background: rgba(255, 255, 255, 0.7);
+}
+
+.empty-state h4 {
+    margin: 0 0 8px;
+}
+
+.compact-header {
+    margin-bottom: 14px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
 }
 
 .pagination-bar {
@@ -34,21 +105,6 @@
     margin-top: 18px;
     padding-top: 18px;
     border-top: 1px solid rgba(18, 37, 71, 0.08);
-}
-
-@media (max-width: 900px) {
-    .internships-hero {
-        flex-direction: column;
-    }
-
-    .hero-title {
-        max-width: none;
-    }
-
-    .pagination-bar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
 }
 
 /* Button hover adjustments for small/admin buttons in this view */
@@ -95,8 +151,8 @@
     width: 720px;
     max-width: calc(100% - 48px);
     background: var(--panel);
-    padding: 20px;
-    border-radius: 12px;
+    padding: 24px;
+    border-radius: 24px;
     box-shadow: var(--shadow);
 }
 
@@ -112,4 +168,50 @@
 
 .modal .actions {
     margin-top: 12px;
+}
+
+@media (min-width: 901px) {
+    .list-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .internships-hero {
+        flex-direction: column;
+    }
+
+    .panel-header,
+    .card-top,
+    .modal-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .hero-title {
+        max-width: none;
+    }
+
+    .metrics {
+        max-width: none;
+        justify-content: flex-start;
+    }
+
+    .panel-actions {
+        justify-content: flex-start;
+    }
+
+    .pagination-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .modal {
+        max-width: calc(100% - 24px);
+        padding: 20px;
+    }
+
+    .modal .field-grid {
+        grid-template-columns: 1fr;
+    }
 }

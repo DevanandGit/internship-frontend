@@ -75,6 +75,13 @@ button {
     box-shadow: var(--shadow);
 }
 
+.hero-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
 .auth-card {
     width: min(480px, 100%);
     border-radius: 28px;
@@ -325,7 +332,7 @@ button {
 
 .spaced {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
 }
@@ -340,6 +347,14 @@ button {
     border: 1px solid rgba(18, 37, 71, 0.1);
     background: rgba(255, 255, 255, 0.72);
     padding: 18px;
+}
+
+.mini-card h4 {
+    margin: 0;
+}
+
+.mini-card .actions {
+    margin-top: 4px;
 }
 
 .list-grid {

@@ -32,9 +32,17 @@
     </div>
     } @else {
     <div class="panel">
-        <div class="spaced">
-            <h3 class="section-title">{{ isAdminView ? 'All internships' : 'Available internships' }}</h3>
+        <div class="panel-header">
             <div>
+                <h3 class="section-title">{{ isAdminView ? 'All internships' : 'Available internships' }}</h3>
+                <p class="muted">
+                    {{ isAdminView
+                    ? 'Admin users can review, create, and maintain internships from this board.'
+                    : 'Students can browse eligible internships and track what they have already applied for.' }}
+                </p>
+            </div>
+
+            <div class="panel-actions">
                 <span class="status neutral">{{ totalCount }} total</span>
                 @if (isAdminView) {
                 <button class="button small" type="button" (click)="openCreateModal()">Create internship</button>
@@ -55,8 +63,12 @@
 
             @for (internship of internships; track internship.id) {
             <article class="mini-card internship-card">
-                <div class="spaced">
-                    <h4>{{ internship.name }}</h4>
+                <div class="card-top">
+                    <div>
+                        <h4>{{ internship.name }}</h4>
+                        <p class="muted internship-meta">{{ internship.duration }} · {{ internship.streamBranch || 'Any
+                            branch' }}</p>
+                    </div>
                     @if (isAdminView) {
                     <span class="status neutral">Admin view</span>
                     } @else if (isApplied(internship.id)) {
@@ -66,15 +78,13 @@
                     }
                 </div>
 
-                <p class="muted">{{ internship.duration }} · {{ internship.streamBranch || 'Any branch' }}</p>
-
                 <div class="chip-row">
                     <span class="chip">CGPA: {{ formatValue(internship.cgpa) }}</span>
                     <span class="chip">Backlogs: {{ formatValue(internship.backlogsCount) }}</span>
                     <span class="chip">Stipend: {{ internship.stipend ?? 'N/A' }}</span>
                 </div>
 
-                <div class="actions">
+                <div class="actions internship-actions">
                     @if (!isAdminView) {
                     <button class="button" type="button" [disabled]="isApplying || isApplied(internship.id)"
                         (click)="apply(internship.id)">
@@ -103,14 +113,17 @@
         </div>
         @if (!isAdminView) {
         <div class="panel">
-            <h3 class="section-title">Applied internships</h3>
+            <div class="panel-header compact-header">
+                <h3 class="section-title">Applied internships</h3>
+                <span class="status neutral">{{ appliedInternships.length }} applied</span>
+            </div>
             @if (appliedInternships.length === 0) {
             <p class="muted">You have not applied to any internships yet.</p>
             } @else {
             <div class="card-list">
                 @for (application of appliedInternships; track application.applicationId) {
                 <article class="mini-card">
-                    <div class="spaced">
+                    <div class="card-top">
                         <h4>{{ application.name }}</h4>
                         <span class="status neutral">{{ application.status }}</span>
                     </div>
@@ -129,7 +142,10 @@
 @if (showModal) {
 <div class="modal-backdrop">
     <div class="modal">
-        <h3>{{ modalTitle }}</h3>
+        <div class="modal-header">
+            <h3>{{ modalTitle }}</h3>
+            <span class="status neutral">Internship form</span>
+        </div>
         <form [formGroup]="internshipForm" (ngSubmit)="saveFromModal()">
             <div class="field">
                 <label>Name</label>

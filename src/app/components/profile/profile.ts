@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiServices, UserProfileResponse, AppliedStudentResponse } from '../../services/api-services';
 import { ActivatedRoute } from '@angular/router';
 import { ProfileResolvedData } from '../../resolvers/profile-resolver';
+import { SuccessDialogService } from '../../services/success-dialog.service';
 
 @Component({
     selector: 'app-profile',
@@ -26,8 +27,8 @@ export class ProfileComponent implements OnInit {
     });
 
     constructor(
-        private readonly api: ApiServices
-        ,
+        private readonly api: ApiServices,
+        private readonly successDialog: SuccessDialogService,
         private readonly route: ActivatedRoute
     ) { }
 
@@ -66,6 +67,7 @@ export class ProfileComponent implements OnInit {
             const response = await this.api.changePassword(this.changeForm.getRawValue() as { currentPassword: string; newPassword: string });
             this.changeResult = response.message;
             this.changeForm.reset();
+            this.successDialog.show(response.message || 'Password changed successfully.');
         } catch (error) {
             this.changeResult = this.api.extractErrorMessage(error, 'Could not change the password.');
         }
@@ -85,6 +87,7 @@ export class ProfileComponent implements OnInit {
         try {
             await this.api.approveApplication(applicationId, '');
             await this.loadAdminApplications();
+            this.successDialog.show('Application approved successfully.');
         } catch (error) {
             this.message = this.api.extractErrorMessage(error, 'Could not approve application.');
         }
@@ -94,6 +97,7 @@ export class ProfileComponent implements OnInit {
         try {
             await this.api.rejectApplication(applicationId, '');
             await this.loadAdminApplications();
+            this.successDialog.show('Application rejected successfully.');
         } catch (error) {
             this.message = this.api.extractErrorMessage(error, 'Could not reject application.');
         }

@@ -1,0 +1,13 @@
+@if (dialog.dialogState$ | async; as state) {
+<div class="dialog-backdrop" role="presentation" (click)="close()">
+    <section class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="success-dialog-title"
+        (click)="$event.stopPropagation()">
+        <div class="dialog-badge">Done</div>
+        <h3 id="success-dialog-title">{{ state.title }}</h3>
+        <p>{{ state.message }}</p>
+        <div class="actions dialog-actions">
+            <button class="button" type="button" (click)="close()">OK</button>
+        </div>
+    </section>
+</div>
+}

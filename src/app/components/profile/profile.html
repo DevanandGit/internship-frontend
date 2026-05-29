@@ -2,9 +2,9 @@
     <div class="hero-card dark-card profile-hero">
         <div>
             <span class="eyebrow">Profile</span>
-            <h2 class="page-title profile-title">Everything from the profile API in one view</h2>
-            <p class="page-subtitle">The page shows user, student, admin, study material, and application details
-                alongside change-password tools.</p>
+            <h2 class="page-title profile-title">Your account, study materials, and application history</h2>
+            <p class="page-subtitle profile-copy">A structured overview of your identity, student data, assigned study
+                materials, and internship activity, with password controls on the side.</p>
         </div>
     </div>
 
@@ -20,7 +20,12 @@
     <div class="grid two-col">
         <div class="stack">
             <div class="panel">
-                <h3 class="section-title">User details</h3>
+                <div class="panel-header compact-header">
+                    <div>
+                        <h3 class="section-title">User details</h3>
+                        <p class="muted">Signed-in account information and role.</p>
+                    </div>
+                </div>
                 <div class="chip-row">
                     <span class="chip">ID: {{ user.id }}</span>
                     <span class="chip">Name: {{ user.name }}</span>
@@ -31,7 +36,12 @@
 
             @if (user.studentProfile; as student) {
             <div class="panel">
-                <h3 class="section-title">Student profile</h3>
+                <div class="panel-header compact-header">
+                    <div>
+                        <h3 class="section-title">Student profile</h3>
+                        <p class="muted">Academic summary and assigned learning resources.</p>
+                    </div>
+                </div>
                 <div class="chip-row">
                     <span class="chip">College: {{ student.collegeName }}</span>
                     <span class="chip">CGPA: {{ student.cgpa ?? 'N/A' }}</span>
@@ -40,8 +50,11 @@
                 </div>
 
                 <div class="stack compact">
-                    <div>
-                        <h4 class="mini-heading">Skills</h4>
+                    <div class="content-block">
+                        <div class="content-block-header">
+                            <h4 class="mini-heading">Skills</h4>
+                            <span class="status neutral">{{ student.skills.length }} skills</span>
+                        </div>
                         <div class="chip-row">
                             @for (skill of student.skills; track skill) {
                             <span class="chip">{{ skill }}</span>
@@ -49,17 +62,47 @@
                         </div>
                     </div>
 
-                    <div>
-                        <h4 class="mini-heading">Assigned study materials</h4>
+                    <div class="content-block">
+                        <div class="content-block-header">
+                            <h4 class="mini-heading">Assigned study materials</h4>
+                            <span class="status neutral">{{ student.assignedStudyMaterials.length }} materials</span>
+                        </div>
                         @if (student.assignedStudyMaterials.length === 0) {
                         <p class="muted">No study materials assigned yet.</p>
                         } @else {
                         <div class="card-list">
                             @for (material of student.assignedStudyMaterials; track material.id) {
-                            <article class="mini-card">
-                                <h4>{{ material.name }}</h4>
-                                <p class="muted">Notes: {{ material.noteUrl || 'N/A' }}</p>
-                                <p class="muted">Video: {{ material.videoUrl || 'N/A' }}</p>
+                            <article class="mini-card material-card">
+                                <div class="card-top">
+                                    <div>
+                                        <h4>{{ material.name }}</h4>
+                                        <p class="muted">Available downloads for notes and video.</p>
+                                    </div>
+                                    <span class="status success">Assigned</span>
+                                </div>
+
+                                <div class="material-paths">
+                                    <p class="muted"><span class="label-inline">Notes path:</span> {{ material.noteUrl
+                                        || 'N/A' }}</p>
+                                    <p class="muted"><span class="label-inline">Video path:</span> {{ material.videoUrl
+                                        || 'N/A' }}</p>
+                                </div>
+
+                                <div class="actions material-actions">
+                                    @if (material.noteUrl) {
+                                    <a class="button-soft small" [href]="material.noteUrl" [attr.download]="''"
+                                        target="_blank" rel="noreferrer">Download notes</a>
+                                    } @else {
+                                    <button class="button-soft small" type="button" disabled>Download notes</button>
+                                    }
+
+                                    @if (material.videoUrl) {
+                                    <a class="button-ghost small" [href]="material.videoUrl" [attr.download]="''"
+                                        target="_blank" rel="noreferrer">Download video</a>
+                                    } @else {
+                                    <button class="button-ghost small" type="button" disabled>Download video</button>
+                                    }
+                                </div>
                             </article>
                             }
                         </div>
@@ -71,25 +114,37 @@
 
             @if (user.adminProfile; as admin) {
             <div class="panel">
-                <h3 class="section-title">Admin profile</h3>
+                <div class="panel-header compact-header">
+                    <div>
+                        <h3 class="section-title">Admin profile</h3>
+                        <p class="muted">Administrative department assignment.</p>
+                    </div>
+                </div>
                 <div class="chip-row">
                     <span class="chip">Department: {{ admin.department }}</span>
                 </div>
             </div>
 
             <div class="panel">
-                <h3 class="section-title">All applications</h3>
+                <div class="panel-header compact-header">
+                    <div>
+                        <h3 class="section-title">All applications</h3>
+                        <p class="muted">Review history for submitted internship applications.</p>
+                    </div>
+                </div>
                 @if (adminApplications.length === 0) {
                 <p class="muted">No applications found.</p>
                 } @else {
                 <div class="card-list">
                     @for (app of adminApplications; track app.applicationId) {
                     <article class="mini-card">
-                        <div class="spaced">
-                            <h4>{{ app.name }}</h4>
+                        <div class="card-top">
+                            <div>
+                                <h4>{{ app.name }}</h4>
+                                <p class="muted">Applicant: {{ app.name }} · {{ app.email }}</p>
+                            </div>
                             <span class="status neutral">{{ app.status }}</span>
                         </div>
-                        <p class="muted">Applicant: {{ app.name }} · {{ app.email }}</p>
                         <p class="muted">Applied on {{ app.appliedAtUtc | date:'medium' }}</p>
                         <div class="actions">
                             @if (app.status === 'Pending') {
@@ -109,18 +164,25 @@
             }
 
             <div class="panel">
-                <h3 class="section-title">Applied internships</h3>
+                <div class="panel-header compact-header">
+                    <div>
+                        <h3 class="section-title">Applied internships</h3>
+                        <p class="muted">All internship submissions made from this account.</p>
+                    </div>
+                </div>
                 @if (user.appliedInternships.length === 0) {
                 <p class="muted">No internship applications have been submitted yet.</p>
                 } @else {
                 <div class="card-list">
                     @for (application of user.appliedInternships; track application.applicationId) {
                     <article class="mini-card">
-                        <div class="spaced">
-                            <h4>{{ application.name }}</h4>
+                        <div class="card-top">
+                            <div>
+                                <h4>{{ application.name }}</h4>
+                                <p class="muted">Applied on {{ application.appliedAtUtc | date:'medium' }}</p>
+                            </div>
                             <span class="status neutral">{{ application.status }}</span>
                         </div>
-                        <p class="muted">Applied on {{ application.appliedAtUtc | date:'medium' }}</p>
                     </article>
                     }
                 </div>
@@ -128,9 +190,14 @@
             </div>
         </div>
 
-        <div class="stack">
+        <div class="stack profile-grid-right">
             <div class="panel">
-                <h3 class="section-title">Change password</h3>
+                <div class="panel-header compact-header">
+                    <div>
+                        <h3 class="section-title">Change password</h3>
+                        <p class="muted">Keep your account secure with a new password.</p>
+                    </div>
+                </div>
                 <form class="stack compact" [formGroup]="changeForm" (ngSubmit)="changePassword()">
                     <label class="field"
                         [class.error]="changeForm.controls.currentPassword.touched && changeForm.controls.currentPassword.invalid">

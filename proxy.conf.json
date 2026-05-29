@@ -4,5 +4,11 @@
         "secure": false,
         "changeOrigin": true,
         "logLevel": "warn"
+    },
+    "/uploads": {
+        "target": "http://localhost:5145",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "warn"
     }
 }

@@ -1,0 +1,93 @@
+.study-materials-hero {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 28px;
+}
+
+.study-materials-title {
+    color: #ffffff;
+    margin-top: 14px;
+    max-width: 18ch;
+}
+
+.study-materials-copy {
+    color: rgba(248, 251, 255, 0.78);
+    max-width: 72ch;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.study-materials-grid {
+    align-items: start;
+}
+
+.upload-grid {
+    align-items: start;
+}
+
+.upload-card {
+    display: grid;
+    gap: 10px;
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(18, 37, 71, 0.1);
+    background: rgba(255, 255, 255, 0.68);
+}
+
+.upload-card .field {
+    margin: 0;
+}
+
+.upload-card p {
+    word-break: break-word;
+}
+
+.material-card {
+    cursor: pointer;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.material-card:hover,
+.material-card:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 30px rgba(14, 37, 71, 0.08);
+}
+
+.detail-panel {
+    position: sticky;
+    top: 106px;
+}
+
+.detail-header {
+    margin-bottom: 12px;
+}
+
+.detail-link {
+    display: inline-flex;
+    width: fit-content;
+    color: #0e5f82;
+    font-weight: 700;
+    word-break: break-word;
+}
+
+.assign-panel {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(18, 37, 71, 0.08);
+}
+
+@media (max-width: 900px) {
+    .study-materials-hero {
+        flex-direction: column;
+    }
+
+    .detail-panel {
+        position: static;
+    }
+}

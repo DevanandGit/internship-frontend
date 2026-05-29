@@ -55,6 +55,13 @@ export interface StudyMaterialResponse {
     name: string;
     noteUrl?: string | null;
     videoUrl?: string | null;
+    assignedStudents?: StudentLookupResponse[];
+}
+
+export interface StudentLookupResponse {
+    id: number;
+    name: string;
+    email: string;
 }
 
 export interface PagedResponse<T> {
@@ -217,6 +224,38 @@ export class ApiServices {
         return this.get('/internships/applied');
     }
 
+    async getStudyMaterials(): Promise<StudyMaterialResponse[]> {
+        return this.get('/study-materials');
+    }
+
+    async getStudyMaterial(materialId: number): Promise<StudyMaterialResponse> {
+        return this.get(`/study-materials/${materialId}`);
+    }
+
+    async createStudyMaterial(request: FormData): Promise<StudyMaterialResponse> {
+        return this.postForm('/study-materials', request, true);
+    }
+
+    async updateStudyMaterial(materialId: number, request: FormData): Promise<void> {
+        return this.putForm(`/study-materials/${materialId}`, request, true);
+    }
+
+    async deleteStudyMaterial(materialId: number): Promise<{ message: string }> {
+        return this.delete(`/study-materials/${materialId}`, true);
+    }
+
+    async assignStudyMaterial(materialId: number, internId: number): Promise<{ message: string }> {
+        return this.post(`/study-materials/${materialId}/assign/${internId}`, {}, true);
+    }
+
+    async unassignStudyMaterial(materialId: number, internId: number): Promise<void> {
+        return this.delete(`/study-materials/${materialId}/assign/${internId}`, true);
+    }
+
+    async getStudents(): Promise<StudentLookupResponse[]> {
+        return this.get('/students', true);
+    }
+
     async applyToInternship(internshipId: number): Promise<{ message: string }> {
         return this.post(`/internships/${internshipId}/apply`, {}, true);
     }
@@ -370,10 +409,12 @@ export class ApiServices {
         );
     }
 
-    private buildHeaders(auth: boolean): HttpHeaders {
-        const headers: Record<string, string> = {
-            'Content-Type': 'application/json'
-        };
+    private buildHeaders(auth: boolean, jsonContentType = true): HttpHeaders {
+        const headers: Record<string, string> = {};
+
+        if (jsonContentType) {
+            headers['Content-Type'] = 'application/json';
+        }
 
         if (auth) {
             const session = this.getSession();
@@ -383,6 +424,22 @@ export class ApiServices {
         }
 
         return new HttpHeaders(headers);
+    }
+
+    private async postForm<T>(path: string, body: FormData, auth = true): Promise<T> {
+        return firstValueFrom(
+            this.http.post<T>(`${this.apiBaseUrl}${path}`, body, {
+                headers: this.buildHeaders(auth, false)
+            })
+        );
+    }
+
+    private async putForm<T>(path: string, body: FormData, auth = true): Promise<T> {
+        return firstValueFrom(
+            this.http.put<T>(`${this.apiBaseUrl}${path}`, body, {
+                headers: this.buildHeaders(auth, false)
+            })
+        );
     }
 
     private storeSession(response: AuthResponse): SessionInfo {

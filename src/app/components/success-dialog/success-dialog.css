@@ -1,0 +1,51 @@
+.dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: grid;
+    place-items: center;
+    background: rgba(7, 16, 34, 0.54);
+    backdrop-filter: blur(6px);
+}
+
+.dialog-card {
+    width: min(420px, calc(100% - 32px));
+    border-radius: 26px;
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(17, 31, 71, 0.12);
+    box-shadow: 0 24px 70px rgba(6, 15, 36, 0.25);
+    text-align: center;
+}
+
+.dialog-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(22, 163, 74, 0.12);
+    color: #166534;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+}
+
+.dialog-card h3 {
+    margin: 0;
+    font-size: 1.45rem;
+    letter-spacing: -0.03em;
+}
+
+.dialog-card p {
+    margin: 12px 0 0;
+    color: var(--muted);
+    line-height: 1.55;
+}
+
+.dialog-actions {
+    justify-content: center;
+    margin-top: 22px;
+}

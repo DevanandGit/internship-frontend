@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiServices, AppliedInternshipResponse, InternshipResponse, InternshipRequest } from '../../services/api-services';
 import { InternshipsResolvedData } from '../../resolvers/internships-resolver';
+import { SuccessDialogService } from '../../services/success-dialog.service';
 
 @Component({
     selector: 'app-internships',
@@ -43,7 +44,8 @@ export class InternshipsComponent implements OnInit {
     constructor(
         protected readonly api: ApiServices,
         private readonly route: ActivatedRoute,
-        private readonly router: Router
+        private readonly router: Router,
+        private readonly successDialog: SuccessDialogService
     ) { }
 
     protected createInProgress = false;
@@ -100,6 +102,7 @@ export class InternshipsComponent implements OnInit {
 
         this.isSubmitting = true;
         try {
+            const isEditing = !!this.editingInternshipId;
             if (this.editingInternshipId) {
                 await this.api.updateInternship(this.editingInternshipId, payload);
                 this.message = 'Internship updated successfully.';
@@ -110,6 +113,7 @@ export class InternshipsComponent implements OnInit {
 
             this.closeModal();
             await this.loadData(this.pageNumber);
+            this.successDialog.show(isEditing ? 'Internship updated successfully.' : 'Internship created successfully.');
         } catch (error) {
             this.message = this.api.extractErrorMessage(error, 'Could not save the internship.');
         } finally {
@@ -127,6 +131,7 @@ export class InternshipsComponent implements OnInit {
             await this.api.deleteInternship(internshipId);
             this.message = 'Internship deleted.';
             await this.loadData(this.pageNumber);
+            this.successDialog.show('Internship deleted successfully.');
         } catch (error) {
             this.message = this.api.extractErrorMessage(error, 'Could not delete the internship.');
         } finally {
@@ -157,6 +162,7 @@ export class InternshipsComponent implements OnInit {
             await this.api.applyToInternship(internshipId);
             this.message = 'Application submitted successfully.';
             await this.loadAppliedInternships();
+            this.successDialog.show('Application submitted successfully.');
         } catch (error) {
             this.message = this.api.extractErrorMessage(error, 'Unable to apply to the internship right now.');
         } finally {

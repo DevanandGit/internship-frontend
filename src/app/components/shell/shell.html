@@ -7,6 +7,9 @@
 
         <nav class="shell-nav" aria-label="Primary navigation">
             <a routerLink="/internships" routerLinkActive="active-link">Internships</a>
+            @if (api.isAdmin()) {
+            <a routerLink="/study-materials" routerLinkActive="active-link">Study materials</a>
+            }
             <a routerLink="/profile" routerLinkActive="active-link">Profile</a>
             <a routerLink="/feedback" routerLinkActive="active-link">Feedback</a>
             <button type="button" class="shell-logout" (click)="logout()">Logout</button>

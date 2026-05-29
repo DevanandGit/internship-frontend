@@ -10,6 +10,7 @@ import {
     UserProfileResponse
 } from '../../services/api-services';
 import { FeedbackResolvedData } from '../../resolvers/feedback-resolver';
+import { SuccessDialogService } from '../../services/success-dialog.service';
 
 @Component({
     selector: 'app-feedback',
@@ -44,7 +45,8 @@ export class FeedbackComponent implements OnInit {
 
     constructor(
         private readonly api: ApiServices,
-        private readonly route: ActivatedRoute
+        private readonly route: ActivatedRoute,
+        private readonly successDialog: SuccessDialogService
     ) { }
 
     async ngOnInit(): Promise<void> {
@@ -94,6 +96,7 @@ export class FeedbackComponent implements OnInit {
             this.submittedInternshipIds.add(this.activeInternship.internshipId);
             this.closeModal();
             this.cdr.detectChanges();
+            this.successDialog.show('Feedback submitted successfully.');
         } catch (error) {
             this.message = this.api.extractErrorMessage(error, 'Could not submit feedback.');
         } finally {

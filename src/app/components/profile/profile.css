@@ -8,6 +8,11 @@
     margin-top: 14px;
 }
 
+.profile-copy {
+    color: rgba(248, 251, 255, 0.78);
+    max-width: 72ch;
+}
+
 .compact {
     gap: 12px;
 }
@@ -15,4 +20,89 @@
 .mini-heading {
     margin: 0 0 10px;
     font-size: 1rem;
+}
+
+.panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.compact-header {
+    margin-bottom: 14px;
+}
+
+.content-block {
+    display: grid;
+    gap: 12px;
+    padding-top: 6px;
+}
+
+.content-block-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.material-card {
+    display: grid;
+    gap: 14px;
+}
+
+.card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.card-top h4 {
+    margin: 0;
+}
+
+.material-paths {
+    display: grid;
+    gap: 6px;
+}
+
+.label-inline {
+    font-weight: 800;
+    color: #20304f;
+}
+
+.material-actions {
+    align-items: center;
+}
+
+.button-soft.small,
+.button-ghost.small {
+    padding: 10px 14px;
+}
+
+.button-soft.small:disabled,
+.button-ghost.small:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.profile-grid-right {
+    position: sticky;
+    top: 106px;
+}
+
+@media (max-width: 900px) {
+
+    .panel-header,
+    .card-top,
+    .content-block-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-grid-right {
+        position: static;
+    }
 }

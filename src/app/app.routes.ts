@@ -7,9 +7,11 @@ import { LoginComponent } from './components/login/login';
 import { ProfileComponent } from './components/profile/profile';
 import { RegisterComponent } from './components/register/register';
 import { ShellComponent } from './components/shell/shell';
+import { StudyMaterialsComponent } from './components/study-materials/study-materials';
 import { feedbackResolver } from './resolvers/feedback-resolver';
 import { internshipsResolver } from './resolvers/internships-resolver';
 import { profileResolver } from './resolvers/profile-resolver';
+import { studyMaterialsResolver } from './resolvers/study-materials-resolver';
 
 export const routes: Routes = [
     {
@@ -43,6 +45,18 @@ export const routes: Routes = [
                 component: ProfileComponent,
                 canActivate: [authGuard],
                 resolve: { profile: profileResolver }
+            },
+            {
+                path: 'study-materials',
+                component: StudyMaterialsComponent,
+                canActivate: [authGuard],
+                resolve: { studyMaterialsData: studyMaterialsResolver }
+            },
+            {
+                path: 'study-materials/:id',
+                component: StudyMaterialsComponent,
+                canActivate: [authGuard],
+                resolve: { studyMaterialsData: studyMaterialsResolver }
             },
             {
                 path: 'feedback',

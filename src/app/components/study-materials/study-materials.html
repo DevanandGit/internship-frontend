@@ -1,0 +1,187 @@
+<section class="stack study-materials-page">
+    <div class="hero-card dark-card study-materials-hero">
+        <div>
+            <span class="eyebrow">Study materials</span>
+            <h2 class="page-title study-materials-title">Notes and videos for every student</h2>
+            <p class="page-subtitle study-materials-copy">Admins can create, update, delete, assign, and unassign
+                study materials. Students can browse the catalog and open the detailed view only.</p>
+        </div>
+
+        @if (isAdminView) {
+        <div class="hero-actions">
+            <button class="button" type="button" (click)="beginCreate()">New study material</button>
+            @if (selectedMaterialId) {
+            <button class="button-ghost" type="button" (click)="showList()">Back to list</button>
+            }
+        </div>
+        }
+    </div>
+
+    @if (message) {
+    <p class="info-text">{{ message }}</p>
+    }
+
+    @if (isLoading) {
+    <div class="panel">
+        <p class="muted">Loading study materials...</p>
+    </div>
+    } @else {
+    <div class="grid two-col study-materials-grid">
+        <div class="stack">
+            @if (isAdminView) {
+            <div class="panel">
+                <div class="spaced">
+                    <h3 class="section-title">{{ editingMaterialId ? 'Update study material' : 'Create study material'
+                        }}</h3>
+                    @if (editingMaterialId) {
+                    <span class="status warning">Editing #{{ editingMaterialId }}</span>
+                    }
+                </div>
+
+                <form class="stack compact" [formGroup]="studyMaterialForm" (ngSubmit)="saveMaterial()">
+                    <label class="field">
+                        <span>Name</span>
+                        <input type="text" formControlName="name" placeholder="Study material name" />
+                    </label>
+
+                    <div class="upload-card">
+                        <label class="field">
+                            <span>Upload notes</span>
+                            <input type="file" accept=".pdf,.doc,.docx,.txt"
+                                (change)="onFileSelected($event, 'noteUrl')" />
+                        </label>
+                        <p class="muted">Selected notes file: {{ selectedNoteFileName ||
+                            studyMaterialForm.controls.noteUrl.value || 'No file selected' }}</p>
+                    </div>
+
+                    <div class="upload-card">
+                        <label class="field">
+                            <span>Upload video</span>
+                            <input type="file" accept="video/*" (change)="onFileSelected($event, 'videoUrl')" />
+                        </label>
+                        <p class="muted">Selected video file: {{ selectedVideoFileName ||
+                            studyMaterialForm.controls.videoUrl.value || 'No file selected' }}</p>
+                    </div>
+
+                    <div class="actions">
+                        <button class="button" type="submit" [disabled]="isSubmitting">
+                            {{ editingMaterialId ? 'Update material' : 'Create material' }}
+                        </button>
+                        @if (editingMaterialId) {
+                        <button class="button-ghost" type="button" (click)="cancelEdit()">Cancel</button>
+                        }
+                    </div>
+                </form>
+            </div>
+            }
+
+            <div class="panel">
+                <h3 class="section-title">All study materials</h3>
+
+                @if (materials.length === 0) {
+                <p class="muted">No study materials have been created yet.</p>
+                } @else {
+                <div class="card-list">
+                    @for (material of materials; track material.id) {
+                    <article class="mini-card material-card" (click)="selectMaterial(material.id)" role="button"
+                        tabindex="0">
+                        <div class="spaced">
+                            <div>
+                                <h4>{{ material.name }}</h4>
+                                <p class="muted">Notes: {{ material.noteUrl || 'N/A' }}</p>
+                            </div>
+                            <span class="status neutral">#{{ material.id }}</span>
+                        </div>
+
+                        <div class="chip-row">
+                            <span class="chip">Video: {{ material.videoUrl || 'N/A' }}</span>
+                            <span class="chip">Assigned: {{ material.assignedStudents?.length ?? 0 }}</span>
+                        </div>
+
+                        @if (isAdminView) {
+                        <div class="actions" (click)="$event.stopPropagation()">
+                            <button class="button-soft" type="button" (click)="beginEdit(material)">Update</button>
+                            <button class="button-danger" type="button"
+                                (click)="deleteMaterial(material.id)">Delete</button>
+                        </div>
+                        }
+                    </article>
+                    }
+                </div>
+                }
+            </div>
+        </div>
+
+        <div class="stack">
+            <div class="panel detail-panel">
+                @if (selectedMaterial; as material) {
+                <div class="spaced detail-header">
+                    <div>
+                        <span class="eyebrow">Detailed view</span>
+                        <h3 class="section-title">{{ material.name }}</h3>
+                    </div>
+                    <span class="status success">Material #{{ material.id }}</span>
+                </div>
+
+                <div class="stack compact">
+                    <p class="muted">Notes path</p>
+                    <a class="detail-link" [href]="material.noteUrl || '#'" target="_blank" rel="noreferrer">
+                        {{ material.noteUrl || 'Not provided' }}
+                    </a>
+
+                    <p class="muted">Video path</p>
+                    <a class="detail-link" [href]="material.videoUrl || '#'" target="_blank" rel="noreferrer">
+                        {{ material.videoUrl || 'Not provided' }}
+                    </a>
+
+                    <div>
+                        <h4 class="mini-heading">Assigned students</h4>
+                        @if (assignedStudents.length === 0) {
+                        <p class="muted">No students are assigned yet.</p>
+                        } @else {
+                        <div class="chip-row">
+                            @for (student of assignedStudents; track student.id) {
+                            <span class="chip">{{ student.name }}</span>
+                            }
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                @if (isAdminView) {
+                <div class="assign-panel">
+                    <h4 class="mini-heading">Assign / unassign</h4>
+
+                    @if (students.length === 0) {
+                    <p class="muted">No students are available in the system.</p>
+                    } @else {
+                    <label class="field">
+                        <span>Select student</span>
+                        <select [value]="selectedStudentId ?? ''" (change)="onStudentSelected($event)">
+                            <option value="" disabled>Select a student</option>
+                            @for (student of students; track student.id) {
+                            <option [value]="student.id">{{ student.name }} · {{ student.email }}</option>
+                            }
+                        </select>
+                    </label>
+
+                    <p class="muted">Selected: {{ selectedStudentName || 'None' }}</p>
+
+                    <div class="actions">
+                        <button class="button-soft" type="button" (click)="beginEdit(material)">Update</button>
+                        <button class="button-danger" type="button"
+                            (click)="deleteMaterial(material.id)">Delete</button>
+                        <button class="button" type="button" (click)="assignSelectedStudent()">Assign</button>
+                        <button class="button-ghost" type="button" (click)="unassignSelectedStudent()">Unassign</button>
+                    </div>
+                    }
+                </div>
+                }
+                } @else {
+                <p class="muted">Select a study material from the list to inspect its notes and video links.</p>
+                }
+            </div>
+        </div>
+    </div>
+    }
+</section>

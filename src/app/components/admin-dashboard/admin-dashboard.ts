@@ -9,6 +9,7 @@ import {
     InternshipRequest,
     InternshipResponse
 } from '../../services/api-services';
+import { SuccessDialogService } from '../../services/success-dialog.service';
 
 interface LocalSkillItem {
     id: number;
@@ -67,7 +68,8 @@ export class AdminDashboardComponent implements OnInit {
     });
 
     constructor(
-        private readonly api: ApiServices
+        private readonly api: ApiServices,
+        private readonly successDialog: SuccessDialogService
     ) { }
 
     async ngOnInit(): Promise<void> {
@@ -121,6 +123,7 @@ export class AdminDashboardComponent implements OnInit {
         this.isSubmitting = true;
 
         try {
+            const isEditing = !!this.editingInternshipId;
             if (this.editingInternshipId) {
                 await this.api.updateInternship(this.editingInternshipId, payload);
                 this.message = 'Internship updated successfully.';
@@ -131,6 +134,7 @@ export class AdminDashboardComponent implements OnInit {
 
             this.cancelEdit();
             await this.loadDashboard();
+            this.successDialog.show(isEditing ? 'Internship updated successfully.' : 'Internship created successfully.');
         } catch (error) {
             this.message = this.api.extractErrorMessage(error, 'Could not save the internship.');
         } finally {
@@ -150,6 +154,7 @@ export class AdminDashboardComponent implements OnInit {
                 this.applications = [];
             }
             await this.loadDashboard();
+            this.successDialog.show('Internship deleted successfully.');
         } catch (error) {
             this.message = this.api.extractErrorMessage(error, 'Could not delete the internship.');
         }
@@ -168,6 +173,7 @@ export class AdminDashboardComponent implements OnInit {
         try {
             this.selectedTimer = await this.api.setFeedbackTimer(this.selectedInternshipId, { startUtc, endUtc });
             this.timerMessage = 'Feedback timer updated.';
+            this.successDialog.show('Feedback timer updated successfully.');
         } catch (error) {
             this.timerMessage = this.api.extractErrorMessage(error, 'Could not update the feedback timer.');
         }
@@ -195,10 +201,12 @@ export class AdminDashboardComponent implements OnInit {
                 skill.stackName = name;
             }
             this.skillsMessage = 'Skill updated locally.';
+            this.successDialog.show('Skill updated successfully.');
         } else {
             const nextId = this.localSkills.length > 0 ? Math.max(...this.localSkills.map((item) => item.id)) + 1 : 1;
             this.localSkills.push({ id: nextId, stackName: name });
             this.skillsMessage = 'Skill added locally.';
+            this.successDialog.show('Skill added successfully.');
         }
 
         this.editingSkillId = null;
@@ -213,6 +221,7 @@ export class AdminDashboardComponent implements OnInit {
     deleteSkill(skillId: number): void {
         this.localSkills = this.localSkills.filter((item) => item.id !== skillId);
         this.skillsMessage = 'Skill removed locally.';
+        this.successDialog.show('Skill removed successfully.');
     }
 
     trackByInternship(_: number, item: InternshipResponse): number {
@@ -287,6 +296,7 @@ export class AdminDashboardComponent implements OnInit {
 
             this.reviewNoteForm.reset({ note: '' });
             await this.loadApplications();
+            this.successDialog.show(approve ? 'Application approved successfully.' : 'Application rejected successfully.');
         } catch (error) {
             this.applicationsMessage = this.api.extractErrorMessage(error, 'Could not review the application.');
         }
