@@ -83,6 +83,11 @@ export interface AppliedInternshipResponse {
     duration: string;
     status: string;
     appliedAtUtc: string;
+    isCompleted: boolean;
+    completedAtUtc?: string | null;
+    certificateId?: string | null;
+    certificateDownloadUrl?: string | null;
+    certificateVerifyUrl?: string | null;
 }
 
 export interface AppliedStudentResponse {
@@ -129,6 +134,8 @@ export interface InternshipResponse {
     streamBranch?: string | null;
     stipend?: number | null;
     duration: string;
+    isCompleted?: boolean;
+    completedAtUtc?: string | null;
     studentsApplied?: Array<{ id?: number; name?: string; email?: string }>;
 }
 
@@ -279,6 +286,10 @@ export class ApiServices {
 
     async updateInternship(internshipId: number, request: InternshipRequest): Promise<InternshipResponse> {
         return this.patch(`/internships/${internshipId}`, request, true);
+    }
+
+    async completeInternship(internshipId: number): Promise<{ message: string }> {
+        return this.post(`/internships/${internshipId}/complete`, {}, true);
     }
 
     async deleteInternship(internshipId: number): Promise<{ message: string }> {

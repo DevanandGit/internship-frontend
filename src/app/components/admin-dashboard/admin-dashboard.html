@@ -92,7 +92,10 @@
                                 <p class="muted">{{ internship.duration }} · {{ internship.streamBranch || 'Any branch'
                                     }}</p>
                             </div>
-                            <span class="status neutral">#{{ internship.id }}</span>
+                            <span class="status" [class.success]="internship.isCompleted"
+                                [class.neutral]="!internship.isCompleted">
+                                {{ internship.isCompleted ? 'Completed' : '#' + internship.id }}
+                            </span>
                         </div>
 
                         <div class="chip-row">
@@ -104,6 +107,11 @@
                         <div class="actions">
                             <button class="button-soft" type="button"
                                 (click)="selectInternship(internship.id)">Applications</button>
+                            <button class="button" type="button"
+                                [disabled]="internship.isCompleted || completingInternshipId === internship.id"
+                                (click)="markAsCompleted(internship.id)">
+                                {{ internship.isCompleted ? 'Completed' : 'Mark as complete' }}
+                            </button>
                             <button class="button-ghost" type="button"
                                 (click)="editInternship(internship)">Edit</button>
                             <button class="button-danger" type="button"

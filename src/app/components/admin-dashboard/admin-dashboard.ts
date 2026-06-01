@@ -38,6 +38,7 @@ export class AdminDashboardComponent implements OnInit {
     protected timerMessage = '';
     protected skillsMessage = '';
     protected editingSkillId: number | null = null;
+    protected completingInternshipId: number | null = null;
     protected localSkills: LocalSkillItem[] = [
         { id: 1, stackName: 'Angular' },
         { id: 2, stackName: 'ASP.NET Core' },
@@ -157,6 +158,25 @@ export class AdminDashboardComponent implements OnInit {
             this.successDialog.show('Internship deleted successfully.');
         } catch (error) {
             this.message = this.api.extractErrorMessage(error, 'Could not delete the internship.');
+        }
+    }
+
+    async markAsCompleted(internshipId: number): Promise<void> {
+        if (!window.confirm('Mark this internship as completed? Certificates will be generated for approved students.')) {
+            return;
+        }
+
+        this.completingInternshipId = internshipId;
+
+        try {
+            const response = await this.api.completeInternship(internshipId);
+            this.message = response.message;
+            await this.loadDashboard();
+            this.successDialog.show(response.message || 'Internship marked as completed successfully.');
+        } catch (error) {
+            this.message = this.api.extractErrorMessage(error, 'Could not mark the internship as completed.');
+        } finally {
+            this.completingInternshipId = null;
         }
     }
 

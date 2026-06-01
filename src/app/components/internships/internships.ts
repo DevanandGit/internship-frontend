@@ -29,6 +29,7 @@ export class InternshipsComponent implements OnInit {
     protected modalTitle = '';
     protected isSubmitting = false;
     protected editingInternshipId: number | null = null;
+    protected completingInternshipId: number | null = null;
 
     private readonly fb = inject(FormBuilder);
     private readonly cdr = inject(ChangeDetectorRef);
@@ -139,6 +140,25 @@ export class InternshipsComponent implements OnInit {
         }
     }
 
+    async markAsCompleted(internshipId: number): Promise<void> {
+        if (!window.confirm('Mark this internship as completed? Certificates will be generated for approved students.')) {
+            return;
+        }
+
+        this.completingInternshipId = internshipId;
+
+        try {
+            const response = await this.api.completeInternship(internshipId);
+            this.message = response.message;
+            await this.loadData(this.pageNumber);
+            this.successDialog.show(response.message || 'Internship marked as completed successfully.');
+        } catch (error) {
+            this.message = this.api.extractErrorMessage(error, 'Could not mark the internship as completed.');
+        } finally {
+            this.completingInternshipId = null;
+        }
+    }
+
     async ngOnInit(): Promise<void> {
         this.isAdminView = this.api.isAdmin();
 
@@ -221,6 +241,14 @@ export class InternshipsComponent implements OnInit {
 
     protected formatValue(value: number | null | undefined): string {
         return value === null || value === undefined ? 'Any' : value.toString();
+    }
+
+    protected getLinkedInShareUrl(certificateVerifyUrl?: string | null): string | null {
+        if (!certificateVerifyUrl) {
+            return null;
+        }
+
+        return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateVerifyUrl)}`;
     }
 
     private applyPageData(page: {

@@ -70,7 +70,10 @@
                             branch' }}</p>
                     </div>
                     @if (isAdminView) {
-                    <span class="status neutral">Admin view</span>
+                    <span class="status" [class.success]="internship.isCompleted"
+                        [class.neutral]="!internship.isCompleted">
+                        {{ internship.isCompleted ? 'Completed' : 'Admin view' }}
+                    </span>
                     } @else if (isApplied(internship.id)) {
                     <span class="status success">Applied</span>
                     } @else {
@@ -91,6 +94,11 @@
                         {{ isApplied(internship.id) ? 'Applied' : 'Apply now' }}
                     </button>
                     } @else {
+                    <button class="button-soft small" type="button"
+                        [disabled]="internship.isCompleted || completingInternshipId === internship.id"
+                        (click)="markAsCompleted(internship.id)">
+                        {{ internship.isCompleted ? 'Completed' : 'Mark as complete' }}
+                    </button>
                     <button class="button-ghost small" type="button" (click)="openEditModal(internship)">Update</button>
                     <button class="button-ghost small danger" type="button"
                         (click)="deleteInternship(internship.id)">Delete</button>
@@ -125,9 +133,32 @@
                 <article class="mini-card">
                     <div class="card-top">
                         <h4>{{ application.name }}</h4>
-                        <span class="status neutral">{{ application.status }}</span>
+                        <span class="status" [class.success]="application.isCompleted"
+                            [class.neutral]="!application.isCompleted">
+                            {{ application.isCompleted ? 'Completed' : application.status }}
+                        </span>
                     </div>
                     <p class="muted">Applied on {{ application.appliedAtUtc | date:'medium' }}</p>
+                    @if (application.certificateId) {
+                    <div class="chip-row">
+                        <span class="chip">Certificate: {{ application.certificateId }}</span>
+                        @if (application.completedAtUtc) {
+                        <span class="chip">Completed: {{ application.completedAtUtc | date:'medium' }}</span>
+                        }
+                    </div>
+                    <div class="actions">
+                        @if (application.certificateDownloadUrl) {
+                        <a class="button-soft small" [href]="application.certificateDownloadUrl" target="_blank"
+                            rel="noreferrer">View certificate</a>
+                        <a class="button-ghost small" [href]="application.certificateDownloadUrl"
+                            [attr.download]="application.certificateId + '.pdf'">Download certificate</a>
+                        }
+                        @if (getLinkedInShareUrl(application.certificateVerifyUrl); as linkedInShareUrl) {
+                        <a class="button small" [href]="linkedInShareUrl" target="_blank" rel="noreferrer">Share on
+                            LinkedIn</a>
+                        }
+                    </div>
+                    }
                 </article>
                 }
             </div>

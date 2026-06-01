@@ -102,4 +102,12 @@ export class ProfileComponent implements OnInit {
             this.message = this.api.extractErrorMessage(error, 'Could not reject application.');
         }
     }
+
+    protected getLinkedInShareUrl(certificateVerifyUrl?: string | null): string | null {
+        if (!certificateVerifyUrl) {
+            return null;
+        }
+
+        return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateVerifyUrl)}`;
+    }
 }
